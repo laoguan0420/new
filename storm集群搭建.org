@@ -1,0 +1,50 @@
+#+TITLE:linux下storm集权搭建
+* 环境
+centos7、apache-storm-1.1.1、jdk1.8、python 2.7.5、 zookeeper-3.4.11集群
+* 步骤：
+** 下载解压apache-storm-1.1.1.tar.gz到linux
+#+begin_src shell
+ tar vxzf apache-storm-1.1.1.tar.gz
+#+end_src
+** 配置
+*** 切换到storm配置目录
+#+begin_src shell
+ cd apache-storm-1.1.1/conf/
+#+end_src
+*** 修改storm.yaml中的以下配置
+#+begin_src shell
+  storm.zookeeper.servers:
+      - "192.168.80.128"
+      - "192.168.80.131"
+      - "192.168.80.132"
+
+  storm.local.dir: "/home/laoguan/storm"
+  nimbus.seeds: ["192.168.80.128", "192.168.80.131", "192.168.80.132"]
+  supervisor.slots.ports:
+     - 6700
+     - 6701
+     - 6702
+     - 6703
+  torm.health.check.dir: "healthchecks"
+
+  storm.health.check.timeout.ms: 5000
+#+end_src
+(注意：一定要有空格，否则会报错，建议直接粘贴过去再把ip改为自己zk集群的即可)
+以上配置详解
+| 配置项                        | 配置说明                                                                                                                                               |
+|-------------------------------+--------------------------------------------------------------------------------------------------------------------------------------------------------|
+| storm.zookeeper.servers       | ZooKeeper服务器列表                                                                                                                                    |
+| storm.local.dir               | storm使用的本地文件系统目录(必须存在并且storm进程可读写)                                                                                               |
+| nimbus.seeds                  | 主控节点的地址，可以配置多个                                                                                                                           |
+| supervisor.slots.ports        | supervisor上能够运行workers的端口列表.每个worker占用一个端口,且每个端口只运行一个worker.通过这项配置可以调整每台机器上运行的worker数.(调整slot数/每机) |
+| torm.health.check.dir         | 节点健康检测目录                                                                                                                                       |
+| storm.health.check.timeout.ms | 超时时间设置                                                                                                                                           |
+*** 启动storm,需要先切换到storm的bin目录下
+#+begin_src shell
+./storm nimbus
+./storm ui
+./storm logviewer
+#+end_src
+在浏览器访问：http://你的storm所在ip地址:8080, 即可查看Storm UI主页
+
+

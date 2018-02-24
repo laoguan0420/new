@@ -1,0 +1,41 @@
+* win下Tomcat多实例配置
+** 1. 环境
+win7系统、apache-tomcat-8.5.11（Tomcat路径建议不要有空格或者中文）
+** 2. 在目录下新建几个文件夹（想同时跑几个Tomcat实例就建几个）
+本人建了两个，加上原目录，可同时跑3个Tomcat，取名server1、server2
+（名字看自己心情随便起）
+** 3. 拷贝文件
+将原目录下的conf、logs、temp、webapps、work这几个文件夹拷贝到第二步建的文件夹中
+** 4. 配置
+分别配置server1、server2中的conf中的server.xml文件，修改以下三个地方：
+
+
+#+begin_src html
+<Server port="8025" shutdown="SHUTDOWN">
+ <Connector port="8100" protocol="HTTP/1.1"
+               connectionTimeout="20000"
+               redirectPort="8443" />
+ <Connector port="8029" protocol="AJP/1.3" redirectPort="8443" />
+#+end_src
+
+
+将port设置为自己想要的，但是相互之间不要有冲突，也不要跟其他的软件端口冲突即可。
+在server1目录下建一个新的bat文件，我的是start.bat，文件中有以下内容：
+
+
+#+begin_src shell
+SET CATALINA_BASE=%CD%
+SET CATALINA_HOME=E:\programFiles\apache-tomcat-8.5.11
+cd %CATALINA_HOME%\bin
+call startup.bat
+#+end_src
+
+
+注：CATALINA\_HOME修改为自己的Tomcat主目录即可
+修改完毕后双击start.bat文件即可打开一个Tomcat实例，来张效果图：
+[[2.png]]
+
+
+注：个别时候会出现启动后一闪而过的情况，大部分情况是哪里配置出了问题，
+比如我当时就出现了那个问题，后来测试了一下，原来我的环境变量里配置了tomcat7，
+删掉后就跑的666了
