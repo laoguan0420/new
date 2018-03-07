@@ -1,0 +1,63 @@
+#+TITLE:centos7系统yum卸载后重新安装 
+* 背景
+想在centos上玩python3，可是我用的最新的centos7系统上默认自带的也是python2.7的版本，
+我本身又不想再折腾python3以下的版本，所以就像彻底删掉，没想到由于yum需要依赖python2，
+竟然没删掉，一气之下连yum也一并删掉了，删掉后在需要安装软件的时候才发现只用rpm安装
+是有多费劲，还需要先把安装包下载到本地，不能在线安装，还要自己处理各种软件依赖，
+这让比较懒的我更加难受，在吐槽yum为嘛还没升级到python3依赖的同时，相比之下更能接受
+python2存在带来的便利。在此也劝各位想折腾的朋友，在yum依赖没有升级到python3之前，
+如果不想处理rpm依赖，还是不要贸然把yum以及python2卸载掉。
+
+下面进入正题：
+* rpm包准备
+yum卸载后发现连wget都不能用了，只好把相关rpm包下载下来，传到虚拟机本地。
+下载地址：http://mirrors.163.com/centos/7/os/x86_64/Packages/ 
+（我的是centos7 64位，所以是这个路径，看网址就可以知道每个路径是干嘛的，下载自己
+版本所需的即可）
+
+所需包如下（包顺序之间有依赖，建议按照顺序安装）：
+#+begin_src shell
+python-libs-2.7.5-58.el7.x86_64.rpm
+python-2.7.5-58.el7.x86_64.rpm
+python-iniparse-0.4-9.el7.noarch.rpm
+python-pycurl-7.19.0-19.el7.x86_64.rpm
+rpm-python-4.11.3-25.el7.x86_64.rpm
+yum-metadata-parser-1.1.4-10.el7.x86_64.rpm
+
+yum-3.4.3-154.el7.centos.noarch.rpm 
+yum-plugin-fastestmirror-1.1.31-42.el7.noarch.rpm
+#+end_src
+注：最后两个包相互依赖，安装方法见下面
+* 安装
+使用命令：rpm -ivh 包名按以上顺序依次安装
+最后两个因为相互依赖需要一起安装，命令如下：
+#+begin_src shell
+rpm -ivh yum-3.4.3-154.el7.centos.noarch.rpm yum-plugin-fastestmirror-1.1.31-42.el7.noarch.rpm
+#+end_src
+然后测试一下yum命令，发现已经可以用了，大功告成！然而故事并没有结束，当使用yum命令安装
+软件时发现yum源不好用，无法安装软件，下面就要修改源了。
+* 修改yum源
+** 进入到系统yum源的目录下
+#+begin_src shell
+cd  /etc/yum.repos.d
+#+end_src
+** 下载yum源,并上传到虚拟机
+网址：http://mirrors.163.com/.help/CentOS7-Base-163.repo 
+** 将源移动到yum源目录下，每个人路径不同，故命令在此略过
+** 运行makecache 生成缓存
+#+begin_src shell
+yum makecache 
+#+end_src
+** 运行yum clean all
+#+begin_src shell
+yum clean all
+#+end_src
+（等同于  yum cleanheaders ;  yum cleanpackages）
+** 更新YUM文件
+#+begin_src shell
+yum  update
+#+end_src
+
+本文参考了此篇博客，链接如下：
+http://blog.csdn.net/delphi1234/article/details/51546798 
+在此感谢分享。

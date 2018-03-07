@@ -1,0 +1,64 @@
+#+TITLE: win系统下玩转dubbo框架
+* 框架搭建
+从https://github.com/alibaba/dubbo 上下载源码，解压到本地目录；
+进入解压后项目的根目录（可以看到pom.xml的那层目录），dos命令进入该目录，在命令行里执行：mvn clean install -Dmaven.test.skip命令（前提是要安装maven，没有安装的小伙伴先安装一下，不过估计能玩到dubbo的基本都是老鸟了，这里应该是多此一举了），电脑一定要联网，maven会安装很多依赖的jar包，命令执行结束后，会看到成功的提示。
+进入目录下的all\target目录，就会看到3个打包好的jar包，如图：
+[[jar.png
+]]
+在项目的pom.xml文件中加入依赖（注：版本号与自己打包jar包的版本号保持一致）：
+#+begin_src xml
+<!--添加 dubbo依赖  -->
+    <dependency>
+	    <groupId>com.alibaba</groupId>
+	    <artifactId>dubbo</artifactId>
+	    <version>2.6.1</version>
+	</dependency>
+#+end_src
+此案例注册中心使用被广泛使用与生产环境的Zookeeper，zk的安装和配置不在这里赘述，网上有很多可参考的资料，请自行搞定。
+本人用了3个zk的集群做的实验,完整代码及所需依赖包可在以下网址下载：https://github.com/laoguan0420/dubbo
+（个人理解）Dubbo是基于接口调用的，跟主流的面向接口编程走向了一致，所以接口的定义是服务端和消费端的一个中介和关键，那就让我们首先来定义一个接口（本鸟参考了官方文档，如有需要，请打开：http://dubbo.io/ ）；
+（说点过程中的波折：最开始没有把接口单独建一个工程，导致后续打包时遇到了一些困难，后来不得不重新搞一个工程，看网上有单独打包接口的一些博客，由于只是想先跑起来，就怎么简单怎么来了，如果有跟想法一样，请往下看）
+IproviderService.java
+#+begin_src java
+public interface IProviderService 
+{
+	String sayHello(String name);
+}
+#+end_src
+注：其实就是一个简单的可供调用的接口，随便怎么写都行，除了包名和类名，我是直接拷贝的官网的例子
+然后打jar包，建议用maven，也可以用java自带的（没有什么依赖的情况下，否则还是用maven省心省力），可能是我操作时候哪里有问题，执行mvn install，在后面两个接口实现类和调用接口类加入maven依赖竟然是空的，不得已暂时手动添加了一下jar包，后续找到原因后会及时更新。
+按照官方的说法，dubbo是和Spring一起用的，所以后面都用maven直接管理依赖了
+修改pom.xml文件，主要是增加spring框架依赖和dubbo依赖，这里不再赘述，遇到问题的几率比较大，一般都是依赖包缺少和版本问题，如有需要的，我会将我的代码放到我的github上，欢迎下载。
+下面几个就是我的配置出现的问题及解决方案：
+报错：java.lang.ClassNotFoundException: com.google.common.base.Function
+解决方案：安装maven依赖，如果不是用maven管理，也可直接下载jar包到项目中
+#+begin_src xml
+<dependency>
+    <groupId>com.google.guava</groupId>
+    <artifactId>guava</artifactId>
+    <version>24.0-jre</version>
+</dependency>
+#+end_src
+报错及解决：
+
+报错：java.lang.IllegalStateException: Failed to register dubbo:xxx
+Caused by: java.lang.IllegalStateException: KeeperErrorCode = Unimplemented for /dubbo
+版本问题：
+
+使用Curator时报错，原因是因为版本问题
+
+zookeeper版本：zookeeper-3.4.11
+
+cuartor版本：4.0.0
+
+看Curator官网的声明：
+
+地址：http://curator.apache.org/zk-compatibility.html
+
+The are currently two released versions of Curator, 2.x.x and 3.x.x:
+
+    Curator 2.x.x - compatible with both ZooKeeper 3.4.x and ZooKeeper 3.5.x
+    Curator 3.x.x - compatible only with ZooKeeper 3.5.x and includes support for new features such as dynamic reconfiguration, etc.
+
+解决方法：把cuartor版本降低到了2.x.x。
+
