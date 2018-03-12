@@ -1,6 +1,12 @@
-#+title:java socket编程实例
-*
-#+BEGIN_SRC shell
+#+title:java socket编码实战
+* 背景
+java语言兴起于网络，网络编程对java程序员来说是一个应该掌握的技能，在网络编程里，
+socket编程又是其他的基础，故本文对socket编程做一个讲解，希望让想学习的朋友少走些弯路。
+* 服务端和客户端传递字符串案例
+** 新建java项目
+*** 新建socket服务端类Server
+代码如下
+#+BEGIN_SRC java
 cd /home/laoguan
 
 #+END_SRC 
