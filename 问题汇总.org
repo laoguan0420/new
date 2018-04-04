@@ -1,0 +1,15 @@
+#+title: java问题汇总
+* Q1：junit测试时报错test is not an annotation type
+问题原因及解决办法：这是因为起的类名也是Test,相互冲突，
+建议测试类命名规范为：要测试的类名+Test，这样就比较规范，
+也避免了类似问题的出现。
+* Q2：JUnit-4进行单元测试时报错：java.lang.NoClassDefFoundError：org / hamcrest / SelfDescribing
+问题原因及解决办法：这是因为缺少了hamcrest包引起的，只需要将相应的依赖包加入即可
+* Q3：启动Tomcat时报错：java.lang.UnsupportedClassVersionError
+问题原因及解决办法：这是因为编译时的java环境和运行时的java环境不一致造成的，
+两者修改一致即可。这两个环境最好都与生产环境保持一致，否则就会产生意想不到的后果。
+* Q4：eclipse运行找不到或者无法加载主类
+问题原因及解决办法：正常情况下是Build Path 中的加入的jar包出现了问题，
+比如说加入的jar包源已经没了，这时就需要在Build Path 中将相应报错的jar包remove掉；
+还有一种是在导入jar包的时候没有注意，把本来不是jar包的文件也一并导入到了Build Path 中，
+我就踩过这个深坑，希望后面的朋友不要再次踏入。

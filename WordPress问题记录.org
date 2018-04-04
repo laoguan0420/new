@@ -1,0 +1,24 @@
+#+title: WordPress问题记录
+* 环境
+centos7.4、php、mariadb
+* 您的 PHP 似乎没有安装运行 WordPress 所必需的 MySQL 扩展
+问题原因：没有安装php-mysql,没有开启mysql扩展
+安装php_mysql
+#+begin_src shell
+yum install php-mysql  
+#+end_src
+开启扩展,打开PHP安装位置(如果是用yum安装的，默认配置位置为:/etc),找到php.ini，
+用vim打开并修改，如下：
+#+begin_src shell
+extension=php_mysql.dll
+extension=php_mysqli.dll
+extension_dir = "/usr/lib64/php/modules"
+#+end_src
+服务重启即可
+* Wordpress设置固定链接后无法打开，提示：有点尴尬诶！该页无法显示。
+查了很多资料，有很多是说删除.htaccess文件，可是我的根本就没有这个文件，
+于是自己就尝试着解决，固定链接的位置默认的是标题名，我的标题名有中文，
+试着点击编辑把固定链接中的中文名改为英文后，再次尝试打开，竟然神奇的
+可以用了。
+
+原因分析：可能是对中文支持不够，链接中不能包含中文

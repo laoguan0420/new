@@ -1,0 +1,33 @@
+#+title: jeesite腾讯云快速体验
+* 背景及环境配置
+背景：申请了腾讯云，给了7天的免费试用期，就想测试一下性能怎么样。
+
+配置：1核 1GB 1Mbps 50G硬盘 centos7.2无桌面操作系统
+* 安装jdk环境
+安装过程不再细述，这不是太难的，本例使用的是jdk1.8。唯一要说的是，
+如果是用yum直接安装的那么环境会是openjdk的，这里为了防止出现问题，
+建议用oracle公司的。
+* 安装数据库及配置
+1. 既然只是为了测试，就没必要搞oracle数据库了，就安装mysql就行，
+需注意，如果直接用yum安装，则默认安装的是MariaDB，这个倒不要紧，
+用哪个都行，基本都是兼容的。
+2. 配置。
+#+begin_src shell
+mysql_secure_installation
+#+end_src 
+首先是设置密码，会提示先输入密码
+
+Enter current password for root (enter for none):<–初次运行直接回车
+
+设置密码
+
+Set root password? [Y/n] <– 是否设置root用户密码，输入y并回车或直接回车
+New password: <– 设置root用户的密码
+Re-enter new password: <– 再输入一次你设置的密码
+
+* 安装tomcat
+* 安装git
+* 安装maven
+* 克隆项目
+* 打包部署项目
+* 启动项目
